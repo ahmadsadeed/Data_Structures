@@ -17,7 +17,7 @@ Data read_input() {
 }
 
 void print_occurrences(const std::vector<int>& output) {
-    for (size_t i = 0; i < output.size(); ++i)
+    for(size_t i = 0; i < output.size(); ++i)
         std::cout << output[i] << " ";
     std::cout << "\n";
 }
@@ -43,7 +43,11 @@ vector<int> precomputeHashes(const Data& input, const size_t prime, const size_t
         y = (y * multiplier) % prime;
     }
     for (int i = textSize-patternSize-1; i >= 0; i--) {
-        indexes[i] = (multiplier * indexes[i+1] + t[i] - y * t[i + patternSize]) % prime;
+        auto key = (multiplier * indexes[i+1] + t[i] - y * t[i + patternSize]) % prime;
+        while (key < 0) {
+            key += prime;
+        }
+        indexes[i] = key % prime;
     }
     return indexes;
 }
@@ -69,8 +73,6 @@ vector<int> get_occurrences(const Data& input) {
         if (patternHash != hashes[i]) {
             continue;
         }
-        //        cout << "pattern is: " << s<< " and hash: " << patternHash << endl;
-        //        cout << "text is: " << t.substr(i, s.size() - 1) << " and hash: " << hashes[i] << endl;
         if (t.substr(i, s.size()) == s) {
             ans.push_back(i);
         }
@@ -85,4 +87,15 @@ int main() {
     return 0;
 }
 
-
+/*
+PrecomputeHashes(T, |P|, p, x):
+    H ← array of length |T| − |P| + 1
+    S ← T[ |T| − |P|..|T| − 1]
+    H[ |T| − |P| ] ← PolyHash(S, p, x)
+    y ← 1
+    for i from 1 to |P|:
+        y ← (y × x) mod p
+    for i from |T| − |P| − 1 down to 0:
+        H[ i ] ← (xH[ i + 1] + T[i ] − yT[ i + |P| ]) mod p
+    return H
+*/

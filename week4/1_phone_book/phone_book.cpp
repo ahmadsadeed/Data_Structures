@@ -31,14 +31,13 @@ void write_responses(const vector<string>& result) {
 
 vector<string> process_queries(const vector<Query>& queries) {
     vector<string> result;
-    // Keep list of all existing (i.e. not deleted yet) contacts.
+    // list of contacts
     map<int, string> contacts;
     map<int, string>::iterator found;
     for (size_t i = 0; i < queries.size(); ++i) {
         if (queries[i].type == "add") {
             bool was_founded = false;
-            // if we already have contact with such number,
-            // we should rewrite contact's name
+            // if current in contacts, rewrite contact's name
             found = contacts.find(queries[i].number);
             if (found != contacts.end()) {
                 found->second = queries[i].name;
